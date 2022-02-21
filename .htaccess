@@ -1,0 +1,37 @@
+RewriteEngine On
+RewriteBase /
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
+
+# external redirect from actual URL to pretty one
+RewriteCond %{THE_REQUEST} /blog-post(?:\.html)?\?blogID=([^\s&]+)&blogName=([^\s&]+) [NC]
+RewriteRule ^ blog-post/%1/%2/? [R=302,L,NE]
+
+RewriteCond %{THE_REQUEST} /blog-post(?:\.html)?\?blogID=([^\s&]+)\s [NC]
+RewriteRule ^ blog-post/%1/? [R=302,L,NE]
+
+RewriteCond %{REQUEST_FILENAME} -d [OR]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# internal forward from pretty URL to actual one
+RewriteRule ^blog-post/([^/]+)/?$ blog-post.html?blogID=$1 [NC,L,QSA]
+
+RewriteRule ^blog-post/([^/]+)/([^/]+)/?$ blog-post.html?blogID=$1&blogName=$2 [NC,L,QSA]
+
+RewriteRule ^blog-post/?$ blog-post-list.html [L,NC]
+
+Redirect 301 /events https://grhombustech.com/events.html
+Redirect 301 /events/secret-santa https://grhombustech.com/events.html
+Redirect 301 /blogs https://grhombustech.com/blogs.html
+Redirect 301 /about-us https://grhombustech.com/about-us.html
+
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “eig-php54” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-eig-php54 .php .php5 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit
